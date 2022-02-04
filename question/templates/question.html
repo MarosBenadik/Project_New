@@ -1,0 +1,109 @@
+{% extends 'landing/base.html' %}
+{% block content %}
+<style>
+    .question-container{
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+    }
+    .question{
+        display: grid;
+        grid-template-columns: 3fr 1fr,
+    }
+
+</style>
+<div class="question-container">
+    <div class="container">
+        <div class="col-md-3 col-sm-6">
+            <a href="{% url 'home' %}" class="btn btn-light">Naspat na Otazky</a>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-20 col-sm-10">
+                <div class="question">
+                    <h2>{{question.name}}</h2>
+                    <div>
+                        <span><p>Asked By</p>
+                            <a class="btn-outline-dark" href="{% url 'profile' question.host.id %}" class="question">
+                                <div class="avatar avatar--small">
+                                    <img class="round-circle post-img" height="30" width="30" src="{{ question.host.profile.profilepicture.url }}" /><span>@{{question.host.username}}</span>
+                                </div>
+                        </a></span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    {{ question.image }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-20 col-sm-10">
+                <div class="question">
+                    <span class="question_topics">{{question.topic}}</span>
+                    {% if question.host == request.user %}
+                    <div>
+                        <div>
+                            {% if request.user == question.host %}
+                            <a class="btn-outline-dark" href="{% url 'update-question' question.id %}">Edit</a>
+                            <a class="btn-outline-dark" href="{% url 'delete-question' question.id %}">Delete</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-20 col-sm-10">
+
+                {% endif %}
+                <p>{{question.description}}</p><span>{{question.created|timesince}} ago</span>
+
+                <div class="comment-wrapper">
+                    <h3>Odpovede</h3>
+                    <hr>
+
+                    {% for message in question_messages %}
+                    <div>
+                        {% if request.user == message.user %}
+                        <a class="btn-outline-dark" href="{% url 'delete-message' message.id %}">Delete</a>
+                        {% endif %}
+                        <smal>
+                            <a class="btn-outline-dark" href="{% url 'profile' message.user.id %}" class="comment-wrapper">@{{message.user}}</a>{{message.created|timesince}} ago </smal>
+                        <p>{{message.body}}</p>
+                        <hr>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if request.user.is_authenticated %}
+                <div class="comment-form">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <input type="text" name="body" placeholder="Write your message here..."/>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+         </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-center mt-1">
+            <div class="col-md-20 col-sm-10">
+
+                <div class="participants">
+                    <h3 class="participants__top">Participants <span>{{participants.count}}</span></h3>
+                    {% for user in participants %}
+                        <div>
+                            <a class="btn-outline-dark" href="{% url 'profile' user.id %}" class="particiipant">@{{user.username}}</a>
+                            <p>
+
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+         </div>
+     </div>
+</div>
+{% endblock content %}

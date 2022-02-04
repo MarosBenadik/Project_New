@@ -1,0 +1,27 @@
+{% extends 'landing/base.html' %}
+
+{% block content %}
+<p>Hello, {{ user.username|default:'Guest' }}!</p>
+
+
+{% endblock %}{% extends 'landing/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-5 col-sm-12 border-bottom">
+            <h2>Logout</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-5 col-sm-12 border-bottom">
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" value="Logout">
+            </form>
+        </div>
+    </div>
+</div>
+
+<a href="{% url 'index' %}">Home</a>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'landing/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="container-fluid">
+        <div class="row mt-5">
+            <div class="col-md-5 col-sm-6">
+                <a href="{% url 'post-list' %}" class="btn btn-light">HlavnyFeed</a>
+            </div>
+        </div>
+
+        <h1>Vitaj <img src="{{ user.profile.profilepicture.url }}" class="rounded-circle" width="40" height="40" />{{ user.username|default:'Guest' }}!</h1>
+        <p>Aktualne Pouzivate {{ profile.usercategory }}</p>
+    </div>
+    {% if groups == business %}
+    <div class="container-fluid">
+        <div class="row mt-5">
+            {% include 'calendarapp/dashboard.html' %}
+        </div>
+    </div>
+    {% else %}
+    <div class="container-fluid">
+        <div class="row mt-5">
+            {% include 'calendarapp/dashboard.html' %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

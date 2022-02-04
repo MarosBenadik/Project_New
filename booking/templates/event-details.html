@@ -1,0 +1,28 @@
+{% extends 'landing/base.html' %}
+
+{% block title %}
+Event Details
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="clearfix">
+            <a class="btn btn-primary left" href="{% url 'calendars' %}"> Calendar </a>
+            <a class="btn btn-info right mr-2" href="{% url 'event_edit' event.pk %}"> Edit Event </a>
+        </div>
+
+        <div class="clearfix">
+            <h3>Event Name: {{ event.title }}</h3>
+            <p>From <span style="color: gray;">{{ event.start_time }}</span> To <span style="color: gray;">{{ event.end_time }}</span></p>
+            <hr>
+            <p>{{ event.description }}</p>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between">
+          <div class="p-2 bd-highlight"><h4 class="left" >{{ event.service }}</h4></div>
+          <div class="p-2 bd-highlight">€ {{ event.service.price }}</div>
+          <div class="p-2 bd-highlight">{{ event.service.length }} Hours</div>
+            <div class="p-2 bd-highlight">{{ event.service.category }}</div>
+        </div>
+    </div>
+{% endblock %}

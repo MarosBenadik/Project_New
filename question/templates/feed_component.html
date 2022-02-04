@@ -1,0 +1,12 @@
+{% for question in questions %}
+<div>
+    {% if request.user == question.host %}
+    <a class="btn-outline-dark" href="{% url 'update-question' question.id %}">Edit</a>
+    <a class="btn-outline-dark" href="{% url 'delete-question' question.id %}">Delete</a>
+    {% endif %}
+    <a class="btn-outline-dark" href="#">@{{question.host.username}}</a>
+    <h5><a class="btn-outline-dark" href="{% url 'question' question.id %}">{{question.name}}</a></h5>
+    <small>{{question.topic.name}}</small>
+    <hr>
+</div>
+{% endfor %}

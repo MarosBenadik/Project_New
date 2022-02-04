@@ -1,0 +1,63 @@
+{% extends 'landing/base.html' %}
+
+{% block content %}
+<div class="home-container">
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-3 col-sm-6">
+                <a href="{% url 'home' %}" class="btn btn-light">Naspat na Otazky</a>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-20 col-sm-10">
+                <div class="layout__body">
+                    <form class="form" method="POST" action="">
+                        {% csrf_token %}
+                        <div class="row justify-content-center mt-5">
+                            <div class="form__group">
+                                <label for="question_topic">Enter a Topic</label>
+                                <input required type="text" value="{{question.topic.name}}" name="topic" list="topic-list" />
+                                <datalist id="topic-list">
+                                    <select id="question_topic">
+                                        {% for topic in topics %}
+                                        <options value="{{topic.name}}">{{question.name}}</options>
+                                        {% endfor %}
+                                    </select>
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form__group" enctype="multipart/form-data">
+                                    <label for="question_image">Obrazok</label>
+                                    {{form.image}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="form__group">
+                                    <label for="question_name">Question</label>
+                                    {{form.name}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center mt-5">
+                            <div class="form_group">
+                                <label for="room_name">Question Description</label>
+                                <div class="row justify-content-center mt-5">
+                                    {{form.description}}
+                                    <div>
+                            </div>
+                        </div>
+                                <br>
+
+                        <input class="btn btn-outline-dark" type="submit" value="Submit" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content%}

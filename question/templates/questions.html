@@ -1,0 +1,44 @@
+{% extends 'landing/base.html' %}
+{% block content %}
+
+<style>
+    .home-container{
+        display: grid;
+        grid-template-columns: 1fr 3fr 1fr;
+    }
+
+</style>
+
+<div class="home-container">
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-20 col-sm-10">
+                <div>
+                    {% include 'topics_component.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-6 col-sm-10">
+                <h5>Opitanich Otazok: {{questions_count}} </h5>
+                <a href="{% url 'create-question' %}">create question</a>
+                <br>
+                {% include 'feed_component.html' %}
+                <br>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-20 col-sm-10">
+                {% include 'activity_component.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
