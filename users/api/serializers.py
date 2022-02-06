@@ -53,4 +53,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
 		if 'password' in validated_data:
 			user.set_password(validated_data['password'])
 			user.save()
+
 		return user
+
