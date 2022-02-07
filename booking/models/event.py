@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.urls import reverse
-from users.models import Service, BusinessProfile
+from users.models import Service, Business
 from booking.models.event_abstract import EventAbstract
 from django.contrib.auth.models import User
 
@@ -26,9 +26,9 @@ class EventManager(models.Manager):
 class Event(EventAbstract):
     """ Event model """
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="events")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="events", null=True)
     service = models.ForeignKey(Service, on_delete=models.SET_NULL, null=True)
-    business = models.ForeignKey(BusinessProfile, on_delete=models.SET_NULL, null=True)
+    business = models.ForeignKey(Business, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=200, unique=True)
     description = models.TextField()
     start_time = models.DateTimeField()

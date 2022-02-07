@@ -1,15 +1,18 @@
 import django.contrib.auth.password_validation as validators
+from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.core import exceptions
-from users.models import ServiceCategory, Service
-from django.contrib.auth.models import User, AbstractUser
+from users.models import ServiceCategory, Service, UserProfile, Business, WorkingDays, Adress, SubServices
+from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
 
 
-class ServiceCategorySerializer(serializers.ModelSerializer):
+
+class WorkingDaysSerializer(serializers.ModelSerializer):
 	class Meta:
-		model = ServiceCategory
+		model = WorkingDays
 		fields = '__all__'
+
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,41 +21,88 @@ class UserSerializer(serializers.ModelSerializer):
 		fields = ['id', 'username', 'first_name', 'last_name', 'email', 'groups', 'date_joined']
 
 
+
+class AdressSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Adress
+		fields = '__all__'
+
+
+class ServiceCategorySerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = ServiceCategory
+		fields = '__all__'
+
+
+class SubServiceSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = SubServices
+		fields = '__all__'
+
+
 class ServiceSerializer(serializers.ModelSerializer):
+	category = ServiceCategorySerializer(many=True)
+	service = SubServiceSerializer(many=True)
 	class Meta:
 		model = Service
 		fields = '__all__'
 
 
-class CreateUserSerializer(serializers.ModelSerializer):
+class BusinessSerializer(serializers.ModelSerializer):
+	services = ServiceSerializer(many=True)
+	working_days = WorkingDaysSerializer(many=True)
+	class Meta:
+		model = Business
+		fields = '__all__'
+
+
+# Register Serializer
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password', 'groups')
+        extra_kwargs = {'password': {'write_only': True}}
+
+
+    def create(self, validated_data):
+        user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
+
+        return user
+
+    def profile_create(self, validated_data):
+	    userprofile = UserProfile.objects.create(user=validated_data['id'], username=validated_data['username'])
+	    return userprofile
+
+# Login Serializer
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Incorrect Credentials")
+
+
+class FollowSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = UserProfile
+		fields = ('id', 'username', 'name', 'profilepicture', 'bussiness')
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+	user = UserSerializer()
+	location = AdressSerializer()
+	bussiness = BusinessSerializer()
+	followers = FollowSerializer(many=True)
+	followings = FollowSerializer(many=True)
+
 
 	class Meta:
-		model = AbstractUser
-		fields = ('email', 'first_name', 'last_name', 'password', 'password2', 'groups')
+		model = UserProfile
+		fields = '__all__'
 
-	def validate_password(self, value):
-		try:
-			validate_password(value)
-		except ValidationError:
-			raise serializers.ValidationError(str(ValidationError))
-		return value
 
-	def create(self, validated_data):
-		user = super().create(validated_data)
-		user.set_password(validated_data['password'])
-		groups_data = validated_data.pop('groups')
-		for group_data in groups_data:
-			user.groups.add(group_data)
-
-		user.is_active = False
-		user.save ()
-		return user
-
-	def update (self, instance, validated_data):
-		user = super().update(instance, validated_data)
-		if 'password' in validated_data:
-			user.set_password(validated_data['password'])
-			user.save()
-
-		return user
 

@@ -88,12 +88,14 @@ WSGI_APPLICATION = 'krasaVoVrecku.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'db-KrasaVoVrecku',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb+srv://admin:admin@cluster0.rcwep.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+        }
     }
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 

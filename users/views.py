@@ -13,7 +13,7 @@ from django.urls import reverse
 from .forms import CustomUserCreationForm
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import UserProfile, FreelanceProfile, BusinessProfile
+from .models import UserProfile
 
 from django.http import HttpResponse
 
@@ -21,37 +21,18 @@ from django.http import HttpResponse
 class Dashboard(View):
     def get(self, request, *args, **kwargs):
         user = User.objects.get(pk=request.user.pk)
-        groups_get = Group.objects.get(user=user)
-        groups = groups_get.name
+
+
         events = Event.objects.filter(user=user)
         total_event = len(events)
-        if groups == 'business':
-            profile = BusinessProfile.objects.get(businessuser=user.pk)
-            context = {
-                'user': user,
-                'profile': profile,
-                'groups': groups,
-                'events': events,
-                'total_event': total_event,
-            }
-        elif groups == 'freelancer':
-            questions = Post.objects.filter
-            profile = FreelanceProfile.objects.get(freelanceuser=user.pk)
-            context = {
-                'user': user,
-                'profile': profile,
-                'groups': groups,
-                'events': events,
-                'total_event': total_event,
-            }
-        else:
-            profile = UserProfile.objects.get (user=user.pk)
-            context = {
-                'user': user,
-                'profile': profile,
-                'groups': groups,
-                'events': events,
-            }
+
+        profile = UserProfile.objects.get (user=user.pk)
+        context = {
+            'user': user,
+            'profile': profile,
+
+            'events': events,
+        }
 
         return render(request, "dashboard.html", context)
 

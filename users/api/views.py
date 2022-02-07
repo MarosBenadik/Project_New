@@ -4,9 +4,10 @@ from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from users.models import ServiceCategory, UserProfile, Service
 from rest_framework.response import Response
-from .serializers import ServiceCategorySerializer, UserSerializer, ServiceSerializer, CreateUserSerializer
+from .serializers import ServiceCategorySerializer, UserSerializer, ServiceSerializer, RegisterSerializer, LoginSerializer, ProfileSerializer
 from rest_framework import status
 from django.contrib.auth.models import User
+from rest_framework import generics
 
 
 class CategoryList(APIView):
@@ -72,24 +73,53 @@ class ServicesView(APIView):
 			return Response (serializer.data, status=status.HTTP_201_CREATED)
 		return Response (serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class GetUser(APIView):
 
-	def get(self, reques, pk, format=None):
-		user = User.objects.get(pk=pk)
-		serializer = UserSerializer(user)
-		return Response (serializer.data)
-
-
-class CreateUser(APIView):
+class WorkingHoursView(APIView):
+	def get(self, request):
+		working_days = WorkingDays.objects.all()
+		serializer = WorkingDaysSerializer(working_days, many=True)
+		return Response(serializer.data)
 
 	def post(self, request):
-		serializer = CreateUserSerializer(data=request.data)
-
+		serializer = WorkingDaysSerializer(data=request.data)
 		if serializer.is_valid():
-			serializer.save()
+			serializer.save ()
 			return Response (serializer.data, status=status.HTTP_201_CREATED)
 		return Response (serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class GetUser(APIView):
 
+	def get(self, reques, pk, format=None):
+		user = UserProfile.objects.get(pk=pk)
+		serializer = ProfileSerializer(user)
+		return Response (serializer.data)
+
+
+class RegisterAPI(generics.GenericAPIView):
+    serializer_class = RegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        userprofile = UserProfile.objects.create(user=user)
+
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+
+			})
+
+
+class LoginAPI(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+
+        })
 
 
