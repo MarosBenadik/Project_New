@@ -31,8 +31,8 @@ class Event(EventAbstract):
     business = models.ForeignKey(Business, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=200, unique=True)
     description = models.TextField()
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
 
     objects = EventManager()
 

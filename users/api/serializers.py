@@ -1,8 +1,9 @@
 import django.contrib.auth.password_validation as validators
 from django.contrib.auth import authenticate
 from rest_framework import serializers
+from rest_framework.permissions import IsAuthenticated
 from django.core import exceptions
-from users.models import ServiceCategory, Service, UserProfile, Business, WorkingDays, Adress, SubServices
+from users.models import ServiceCategory, Service, Image, UserProfile, Business, WorkingDays, Adress, SubServices
 from django.contrib.auth.models import User, Group
 from django.core.exceptions import ValidationError
 
@@ -76,14 +77,17 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 # Login Serializer
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
 
-    def validate(self, data):
-        user = authenticate(**data)
-        if user and user.is_active:
-            return user
-        raise serializers.ValidationError("Incorrect Credentials")
+	username = serializers.CharField()
+	password = serializers.CharField()
+
+	permission_classes = [IsAuthenticated]
+
+	def validate(self, data):
+		user = authenticate(**data)
+		if user and user.is_active:
+			return user
+		raise serializers.ValidationError("Incorrect Credentials")
 
 
 class FollowSerializer(serializers.ModelSerializer):
@@ -104,5 +108,25 @@ class ProfileSerializer(serializers.ModelSerializer):
 		model = UserProfile
 		fields = '__all__'
 
+class UpdateProfileSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = UserProfile
+		fields = (
+			'bio','birth_date','location','name'
+		)
+
+class PhotoSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Image
+		fields = '__all__'
 
 
+class ProfileLogInSerializer(serializers.ModelSerializer):
+	location = AdressSerializer ()
+	bussiness = BusinessSerializer ()
+	followers = FollowSerializer (many=True)
+	followings = FollowSerializer (many=True)
+
+	class Meta:
+		model = UserProfile
+		fields = '__all__'

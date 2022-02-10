@@ -12,7 +12,7 @@ def getcurrentbusiness(instance, filename):
     return "uploads/businesspictures/{0}/{1}".format(instance.business_name, filename)
 
 def getcurrentuser(instance, filename):
-    return "uploads/userpictures/{0}/{1}".format(instance.username, filename)
+    return "uploads/userpictures/{0}/{1}".format(instance, filename)
 
 
 class ServiceCategory(models.Model):
@@ -91,13 +91,12 @@ class Business(models.Model):
 
 
 class Image(models.Model):
-    username = models.CharField(max_length=30, blank=True, default='Unknown')
     image = models.ImageField(upload_to=getcurrentuser, default='uploads/profilepictures/default.png', blank=True)
+    uploaded_on = models.DateTimeField(auto_now_add=True)
 
 class UserProfile(models.Model):
 
     user = models.ForeignKey(User, verbose_name='user', related_name='profile', on_delete=models.CASCADE)
-    username = models.CharField (max_length=30, blank=True, default='Unknown')
     name = models.CharField(max_length=30, blank=True, default='Unknown')
     bio = models.TextField(max_length=500, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
@@ -105,5 +104,5 @@ class UserProfile(models.Model):
     profilepicture = models.ImageField(upload_to=getcurrentusername, default='uploads/profilepictures/default.png', blank=True)
     followers = models.ManyToManyField(User, blank=True, related_name='followers')
     followings = models.ManyToManyField(User, blank=True, related_name='followings')
-    images = models.ForeignKey(Image, on_delete=models.CASCADE, blank=True, null=True)
+    images = models.ManyToManyField(Image, blank=True, null=True)
     bussiness = models.ForeignKey(Business, on_delete=models.CASCADE, blank=True, null=True)
