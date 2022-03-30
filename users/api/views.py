@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from users.models import ServiceCategory, UserProfile, Service
@@ -32,7 +32,7 @@ class SingleCategory(APIView):
 			raise Http404
 
 
-	def get (self, request, pk, format=None):
+	def get(self, request, pk, format=None):
 		category = self.get_object(pk)
 		serializer = ServiceCategorySerializer(category)
 		return Response(serializer.data)

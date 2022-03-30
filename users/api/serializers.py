@@ -2,7 +2,7 @@ import django.contrib.auth.password_validation as validators
 from rest_framework import serializers
 from django.core import exceptions
 from users.models import ServiceCategory, Service
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import User, AbstractUser, UserManager
 from django.core.exceptions import ValidationError
 
 
@@ -27,7 +27,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 class CreateUserSerializer(serializers.ModelSerializer):
 
 	class Meta:
-		model = AbstractUser
+		model = UserManager
 		fields = ('email', 'first_name', 'last_name', 'password', 'password2', 'groups')
 
 	def validate_password(self, value):
@@ -37,7 +37,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 			raise serializers.ValidationError(str(ValidationError))
 		return value
 
-	def create(self, validated_data):
+	def create_user(self, validated_data):
 		user = super().create(validated_data)
 		user.set_password(validated_data['password'])
 		groups_data = validated_data.pop('groups')
@@ -53,4 +53,5 @@ class CreateUserSerializer(serializers.ModelSerializer):
 		if 'password' in validated_data:
 			user.set_password(validated_data['password'])
 			user.save()
+
 		return user
