@@ -2,6 +2,8 @@
 
 The Updated code is in Khizar branch😁😁😁😁
 
+Unit testing is applyed to the users app.
+
 The comand tu run a unit test is:
 
 python manage.py test users
